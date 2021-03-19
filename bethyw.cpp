@@ -198,8 +198,8 @@ std::vector <BethYw::InputFileSource> BethYw::parseDatasetsArg(
     // an argument. Check the documentation! Read it and understand it.
     try {
         inputDatasets = args["datasets"].as < std::vector < std::string >> ();
-    } catch (cxxopts::OptionParseException e) {
-        throw std::invalid_argument(e.what());
+    } catch (cxxopts::OptionParseException const&) {
+        inputDatasets.push_back("all");
     }
 
 
@@ -348,7 +348,56 @@ std::unordered_set <std::string> BethYw::parseMeasuresArg(
 std::tuple<unsigned int, unsigned int> BethYw::parseYearsArg(
         cxxopts::ParseResult &args) {
     std::tuple<unsigned int, unsigned int> years;
+    const std::string invalidInput("Invalid input for years argument");
+    int tempYear1, tempYear2;
 
+    auto temp = args["years"].as<std::string>();
+
+    switch (temp.length()) {
+        case 4:
+            try {
+                tempYear1 = std::stoi(temp);
+            } catch (std::invalid_argument const&) {
+                throw (std::invalid_argument(invalidInput));
+            }
+            years = std::make_tuple(tempYear1, tempYear1);
+            break;
+        case 9:
+            try {
+                tempYear1 = std::stoi(temp.substr(0, temp.find("-")));
+                tempYear2 = std::stoi(temp.substr(temp.find("-")+1, temp.length()));
+            } catch (std::invalid_argument const&) {
+                throw (std::invalid_argument(invalidInput + "Correct Case"));
+            }
+            years = std::make_tuple(tempYear1,tempYear2);
+            break;
+        case 0:
+            years = std::make_tuple(0,0);
+            break;
+        case 1:
+            if (temp == "0") {
+                years = std::make_tuple(0,0);
+            } else {
+                throw (std::invalid_argument(invalidInput));
+            }
+            break;
+        case 3:
+            try {
+                tempYear1 = std::stoi(temp.substr(0, temp.find("-")));
+                tempYear2 = std::stoi(temp.substr(temp.find("-"), temp.length()));
+            } catch (std::invalid_argument const&) {
+                throw (std::invalid_argument(invalidInput));
+            }
+            if (tempYear1 == 0 && tempYear2 == 0) {
+                years = std::make_tuple(tempYear1,tempYear2);
+            } else {
+                throw (std::invalid_argument(invalidInput));
+            }
+            break;
+        default:
+            throw (std::invalid_argument(invalidInput));
+            break;
+    }
 
 
     return years;
