@@ -266,13 +266,16 @@ std::unordered_set <std::string> BethYw::parseAreasArg(
     std::unordered_set <std::string> areas;
 
     // Retrieve the areas argument like so:
-    auto temp = args["areas"].as < std::vector < std::string >> ();
+    auto temp = args["areas"].as<std::vector<std::string>>();
 
-    // ...
-    // for (unsigned int i = 0; i < temp.size(); i++) {
-    //   std::string tempLower = std::transform(temp[i].begin, temp[i].end, temp[i].begin, ::tolower);
-    //   areas.insert(tempLower);
-    // }
+    for (size_t i = 0; i < temp.size(); i++) {
+        if (compareStringNoCase(temp[i], "all")) {
+            areas.clear();
+            break;
+        } else {
+            areas.insert(temp[i]);
+        }
+    }
 
     return areas;
 }
