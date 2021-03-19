@@ -310,6 +310,15 @@ std::unordered_set <std::string> BethYw::parseMeasuresArg(
     std::unordered_set <std::string> measures;
     auto temp = args["measures"].as < std::vector < std::string >> ();
 
+    for (size_t i = 0; i < temp.size(); i++) {
+        if (compareStringNoCase(temp[i], "all")) {
+            measures.clear();
+            break;
+        } else {
+            measures.insert(temp[i]);
+        }
+    }
+
     return measures;
 }
 
@@ -339,6 +348,8 @@ std::unordered_set <std::string> BethYw::parseMeasuresArg(
 std::tuple<unsigned int, unsigned int> BethYw::parseYearsArg(
         cxxopts::ParseResult &args) {
     std::tuple<unsigned int, unsigned int> years;
+
+
 
     return years;
 }
