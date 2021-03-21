@@ -24,6 +24,7 @@
 #include <stdexcept>
 #include <tuple>
 #include <unordered_set>
+#include <cstdio>
 
 #include "lib_json.hpp"
 
@@ -191,8 +192,23 @@ void Areas::populateFromAuthorityCodeCSV(
     std::istream &is,
     const BethYw::SourceColumnMapping &cols,
     const StringFilterSet * const areasFilter) {
-  throw std::logic_error(
-    "Areas::populateFromAuthorityCodeCSV() has not been implemented!");
+//  throw std::logic_error(
+//    "Areas::populateFromAuthorityCodeCSV() has not been implemented!");
+    std::string currentLine, areaCode, engName, cymName;
+    Area tempArea;
+    std::getline(is);
+    while(is.peek()!=EOF){
+        std::getline(is,currentLine);
+        //Split the string into 5 sections, discarding the comma sections
+        std::sscanf(currentLine, "%[^,]%*[,]%[^,]%*[,]%s", &areaCode, &engName, &cymName);
+        auto searchAreas = areasFilter.find(areaCode);
+        if (searchAreas != areasFilter.end()) {
+            tempArea = Area(areaCode);
+            tempArea.setName("eng", engName);
+            tempArea.setName("cym", cymName);
+            this->setArea(areaCode, tempArea);
+        }
+    }
 }
 
 /*
