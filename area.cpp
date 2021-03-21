@@ -34,8 +34,7 @@
     Area("W06000023");
 */
 Area::Area(const std::string &localAuthorityCode) : localAuthorityCode(localAuthorityCode) {
-//    throw std::logic_error("Area::Area() has not been implemented!");
-//    names = std::unordered_map<std::string, std::string>;
+
 }
 
 /*
@@ -82,15 +81,6 @@ const std::string& Area::getLocalAuthorityCode() {
     auto name = area.getName(langCode);
 */
 const std::string& Area::getName(std::string lang) {
-//    auto nameIterator = std::find_if(names.begin(), names.end(), []
-//            (const std::tuple <std::string, std::string> &e) {
-//        return std::get<0>(e) == lang;
-//    });
-//    if (nameIterator == names.end()) {
-//        throw std::out_of_range;
-//    } else {
-//        return std::get<1>(*nameIterator);
-//    }
     auto searchName = this->names.find(lang);
     if (searchName == names.end()) {
         throw std::out_of_range(lang + ": not a recognised code!");
@@ -125,7 +115,9 @@ const std::string& Area::getName(std::string lang) {
     area.setName(langCodeWelsh, langValueWelsh);
 */
 void Area::setName(std::string lang, std::string name) {
-//    this->names.push_back(std::make_tuple(lang, name));
+    if ((std::find_if(lang.begin(), lang.end(), non_alphabetic()) != lang.end()) || lang.length() != 3){
+        throw std::invalid_argument;
+    }
     this->names.insert({lang, name});
 }
 

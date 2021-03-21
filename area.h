@@ -19,6 +19,13 @@
 #include <string>
 #include <unordered_map>
 #include "measure.h"
+#include <cctype>
+
+struct non_alphabetic {
+    bool operator()(char c) {
+        return !std::isalpha(c);
+    }
+};
 
 /*
   An Area object consists of a unique authority code, a container for names
