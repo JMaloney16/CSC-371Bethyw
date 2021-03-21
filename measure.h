@@ -6,7 +6,7 @@
   | BETH YW? WELSH GOVERNMENT DATA PARSER |
   +---------------------------------------+
 
-  AUTHOR: <STUDENT NUMBER>
+  AUTHOR: 991384
 
   This file contains the decalaration of the Measure class.
 
@@ -15,6 +15,7 @@
  */
 
 #include <string>
+#include <map>
 
 /*
   The Measure class contains a measure code, label, and a container for readings
@@ -25,7 +26,20 @@
   to overload.
 */
 class Measure {
+private:
+    std::string codename, label;
+    std::map<unsigned int, double> values;
+public:
   Measure(std::string code, const std::string &label);
+  std::string getCodename();
+  std::string getLabel();
+  void setLabel(std::string label);
+  double getValue(unsigned int key);
+  void setValue(unsigned int key, double value);
+  unsigned int size();
+  const double getDifference();
+  const double getDifferenceAsPercentage();
+  const double getAverage();
 };
 
 #endif // MEASURE_H_

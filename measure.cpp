@@ -6,7 +6,7 @@
   | BETH YW? WELSH GOVERNMENT DATA PARSER |
   +---------------------------------------+
 
-  AUTHOR: <STUDENT NUMBER>
+  AUTHOR: 991384
 
   This file contains the implementation of the Measure class. Measure is a
   very simple class that needs to contain a few member variables for its name,
@@ -42,8 +42,8 @@
     std::string label = "Population";
     Measure measure(codename, label);
 */
-Measure::Measure(std::string codename, const std::string &label) {
-  throw std::logic_error("Measure::Measure() has not been implemented!");
+Measure::Measure(std::string codename, const std::string &label) : codename(codename), label(label) {
+//  throw std::logic_error("Measure::Measure() has not been implemented!");
 }
 
 /*
@@ -65,7 +65,9 @@ Measure::Measure(std::string codename, const std::string &label) {
     ...
     auto codename2 = measure.getCodename();
 */
-
+std::string Measure::getCodename() {
+    return codename;
+}
 
 /*
   TODO: Measure::getLabel()
@@ -86,6 +88,9 @@ Measure::Measure(std::string codename, const std::string &label) {
     ...
     auto label = measure.getLabel();
 */
+std::string Measure::getLabel() {
+    return label;
+}
 
 
 /*
@@ -102,6 +107,9 @@ Measure::Measure(std::string codename, const std::string &label) {
     ...
     measure.setLabel("New Population");
 */
+void Measure::setLabel(std::string label) {
+    this->label = label;
+}
 
 
 /*
@@ -131,6 +139,13 @@ Measure::Measure(std::string codename, const std::string &label) {
     ...
     auto value = measure.getValue(1999); // returns 12345678.9
 */
+double Measure::getValue(unsigned int key) {
+    auto searchValues = values.find(key);
+    if (searchValues == values.end()) {
+        throw std::out_of_range("No value found for year " + std::to_string(key));
+    }
+    return searchValues->second;
+}
 
 
 /*
@@ -155,7 +170,10 @@ Measure::Measure(std::string codename, const std::string &label) {
 
     measure.setValue(1999, 12345678.9);
 */
-
+void Measure::setValue(unsigned int key, double value) {
+//    values.insert_or_assign(key, value);
+    values[key] = value;
+}
 
 /*
   TODO: Measure::size()
@@ -175,7 +193,9 @@ Measure::Measure(std::string codename, const std::string &label) {
     measure.setValue(1999, 12345678.9);
     auto size = measure.size(); // returns 1
 */
-
+unsigned int Measure::size() {
+    return values.size();
+}
 
 /*
   TODO: Measure::getDifference()
@@ -194,7 +214,13 @@ Measure::Measure(std::string codename, const std::string &label) {
     measure.setValue(1999, 12345679.9);
     auto diff = measure.getDifference(); // returns 1.0
 */
-
+const double Measure::getDifference() {
+    if (values.end()->second - values.begin()->second == 0) {
+        return 0;
+    }else {
+        return values.end()->second - values.begin()->second;
+    }
+}
 
 /*
   TODO: Measure::getDifferenceAsPercentage()
@@ -213,7 +239,11 @@ Measure::Measure(std::string codename, const std::string &label) {
     measure.setValue(2010, 12345679.9);
     auto diff = measure.getDifferenceAsPercentage();
 */
-
+const double Measure::getDifferenceAsPercentage() {
+    double beginValue = values.begin()->second;
+    double endValue = values.end()->second;
+    return endValue / beginValue;
+}
 
 /*
   TODO: Measure::getAverage()
@@ -231,7 +261,13 @@ Measure::Measure(std::string codename, const std::string &label) {
     measure.setValue(1999, 12345679.9);
     auto diff = measure.getDifference(); // returns 1
 */
-
+const double Measure::getAverage() {
+    double average = 0;
+    for (auto it = values.begin(); it != values.end(); ++it) {
+        average += it->first;
+    }
+    return average/values.size();
+}
 
 /*
   TODO: operator<<(os, measure)
