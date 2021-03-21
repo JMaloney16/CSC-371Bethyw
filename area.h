@@ -41,11 +41,16 @@ private:
     std::string localAuthorityCode;
 //    std::vector <std::tuple<std::string, std::string>> names;
     std::unordered_map<std::string,std::string> names;
+    std::unordered_map<std::string,Measure> measures;
 public:
     Area(const std::string &localAuthorityCode);
     const std::string& getLocalAuthorityCode();
     void setName(std::string lang, std::string name);
     const std::string& getName(std::string lang);
+
+    Measure getMeasure(std::string key);
+    void setMeasure(std::string codename, Measure measure);
+    unsigned int size();
 };
 
 #endif // AREA_H_
