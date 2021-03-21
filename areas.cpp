@@ -24,6 +24,7 @@
 #include <stdexcept>
 #include <tuple>
 #include <unordered_set>
+#include <unordered_map>
 #include <cstdio>
 
 #include "lib_json.hpp"
@@ -75,12 +76,12 @@ Areas::Areas() {
     data.setArea(localAuthorityCode, area);
 */
 void Areas::setArea(std::string localAuthorityCode, Area area){
-    areas.insert_or_assign(localAuthorityCode, area);
-//    auto searchAreas = areas.find(localAuthorityCode);
-//    if (searchAreas != areas.end()){
-//        areas.erase(localAuthorityCode);
-//    }
-//        areas.add(localAuthorityCode, area);
+//    areasContainer.insert_or_assign(localAuthorityCode, area);
+    auto searchAreas = areasContainer.find(localAuthorityCode);
+    if (searchAreas != areasContainer.end()){
+        areasContainer.erase(localAuthorityCode);
+    }
+        areasContainer.insert(std::make_pair(localAuthorityCode, area));
 }
 
 /*
@@ -107,11 +108,11 @@ void Areas::setArea(std::string localAuthorityCode, Area area){
     Area area2 = areas.getArea("W06000023");
 */
 Area Areas::getArea(std::string localAuthorityCode) {
-    auto searchAreas = areas.find(localAuthorityCode);
-    if (searchAreas == areas.end()) {
+    auto searchAreas = areasContainer.find(localAuthorityCode);
+    if (searchAreas == areasContainer.end()) {
         throw std::out_of_range(localAuthorityCode + ": does not exist!");
     } else {
-        return *searchAreas;
+        return searchAreas->second;
     }
 }
 
@@ -135,7 +136,7 @@ Area Areas::getArea(std::string localAuthorityCode) {
     auto size = areas.size(); // returns 1
 */
 unsigned int Areas::size() {
-    return areas.size();
+    return areasContainer.size();
 }
 
 /*
@@ -196,15 +197,19 @@ void Areas::populateFromAuthorityCodeCSV(
 //  throw std::logic_error(
 //    "Areas::populateFromAuthorityCodeCSV() has not been implemented!");
     std::string currentLine, areaCode, engName, cymName;
-    Area tempArea;
-    std::getline(is);
+    std::getline(is, currentLine);
     while(is.peek()!=EOF){
         std::getline(is,currentLine);
-        //Split the string into 5 sections, discarding the comma sections
-        std::sscanf(currentLine, "%[^,]%*[,]%[^,]%*[,]%s", &areaCode, &engName, &cymName);
-        auto searchAreas = areasFilter.find(areaCode);
-        if (searchAreas != areasFilter.end()) {
-            tempArea = Area(areaCode);
+        //Split the string into 3 sections, discarding the commas
+//        std::sscanf(currentLine.c_str(), "%[^,]%*[,]%[^,]%*[,]%s", &areaCode, &engName, &cymName);
+        areaCode = currentLine.substr(0, currentLine.find(','));
+        currentLine.erase(0, currentLine.find(',')+1);
+        engName = currentLine.substr(0, currentLine.find(','));
+        currentLine.erase(0, currentLine.find(',')+1);
+        cymName = currentLine;
+        auto searchAreas = areasFilter->find(areaCode);
+        if (searchAreas != areasFilter->end()) {
+            Area tempArea = Area(areaCode);
             tempArea.setName("eng", engName);
             tempArea.setName("cym", cymName);
             this->setArea(areaCode, tempArea);

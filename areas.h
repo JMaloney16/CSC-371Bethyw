@@ -67,7 +67,7 @@ using AreasContainer = std::unordered_map<std::string, Area>;
 */
 class Areas {
 private:
-    AreasContainer areas;
+    AreasContainer areasContainer;
 public:
     Areas();
 

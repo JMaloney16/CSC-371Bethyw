@@ -20,6 +20,7 @@
 #include <stdexcept>
 #include <string>
 #include <unordered_map>
+#include <algorithm>
 #include "area.h"
 
 /*
@@ -116,7 +117,7 @@ const std::string& Area::getName(std::string lang) {
 */
 void Area::setName(std::string lang, std::string name) {
     if ((std::find_if(lang.begin(), lang.end(), non_alphabetic()) != lang.end()) || lang.length() != 3){
-        throw std::invalid_argument;
+        throw std::invalid_argument("Incorrect format lang.");
     }
     this->names.insert({lang, name});
 }
