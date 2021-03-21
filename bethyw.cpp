@@ -66,10 +66,10 @@ int BethYw::run(int argc, char *argv[]) {
     std::string dir = args["dir"].as<std::string>() + DIR_SEP;
 
     // Parse other arguments and import data
-    // auto datasetsToImport = BethYw::parseDatasetsArg(args);
-    // auto areasFilter      = BethYw::parseAreasArg(args);
-    // auto measuresFilter   = BethYw::parseMeasuresArg(args);
-    // auto yearsFilter      = BethYw::parseYearsArg(args);
+     auto datasetsToImport = BethYw::parseDatasetsArg(args);
+     auto areasFilter      = BethYw::parseAreasArg(args);
+     auto measuresFilter   = BethYw::parseMeasuresArg(args);
+     auto yearsFilter      = BethYw::parseYearsArg(args);
 
     Areas data = Areas();
 
@@ -396,7 +396,6 @@ std::tuple<unsigned int, unsigned int> BethYw::parseYearsArg(
             break;
         default:
             throw (std::invalid_argument(invalidInput));
-            break;
     }
 
 
