@@ -75,11 +75,12 @@ Areas::Areas() {
     data.setArea(localAuthorityCode, area);
 */
 void Areas::setArea(std::string localAuthorityCode, Area area){
-    auto searchAreas = areas.find(localAuthorityCode);
-    if (searchAreas != areas.end()){
-        areas.erase(localAuthorityCode);
-    }
-        areas.add(localAuthorityCode, area);
+    areas.insert_or_assign(localAuthorityCode, area);
+//    auto searchAreas = areas.find(localAuthorityCode);
+//    if (searchAreas != areas.end()){
+//        areas.erase(localAuthorityCode);
+//    }
+//        areas.add(localAuthorityCode, area);
 }
 
 /*
