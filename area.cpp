@@ -6,7 +6,7 @@
   | BETH YW? WELSH GOVERNMENT DATA PARSER |
   +---------------------------------------+
 
-  AUTHOR: <STUDENT NUMBER>
+  AUTHOR: 991384
 
   This file contains the implementation for the Area class. Area is a relatively
   simple class that contains a local authority code, a container of names in
@@ -18,7 +18,8 @@
 */
 
 #include <stdexcept>
-
+#include <string>
+#include <unordered_map>
 #include "area.h"
 
 /*
@@ -32,8 +33,9 @@
   @example
     Area("W06000023");
 */
-Area::Area(const std::string& localAuthorityCode) {
-  throw std::logic_error("Area::Area() has not been implemented!");
+Area::Area(const std::string &localAuthorityCode) : localAuthorityCode(localAuthorityCode) {
+//    throw std::logic_error("Area::Area() has not been implemented!");
+//    names = std::unordered_map<std::string, std::string>;
 }
 
 /*
@@ -50,6 +52,9 @@ Area::Area(const std::string& localAuthorityCode) {
     ...
     auto authCode = area.getLocalAuthorityCode();
 */
+const std::string& Area::getLocalAuthorityCode() {
+    return this->localAuthorityCode;
+}
 
 
 /*
@@ -76,7 +81,23 @@ Area::Area(const std::string& localAuthorityCode) {
     ...
     auto name = area.getName(langCode);
 */
-
+const std::string& Area::getName(std::string lang) {
+//    auto nameIterator = std::find_if(names.begin(), names.end(), []
+//            (const std::tuple <std::string, std::string> &e) {
+//        return std::get<0>(e) == lang;
+//    });
+//    if (nameIterator == names.end()) {
+//        throw std::out_of_range;
+//    } else {
+//        return std::get<1>(*nameIterator);
+//    }
+    auto searchName = this->names.find(lang);
+    if (searchName == names.end()) {
+        throw std::out_of_range(lang + ": not a recognised code!");
+    } else {
+        return searchName->second;
+    }
+}
 
 /*
   TODO: Area::setName(lang, name)
@@ -103,7 +124,10 @@ Area::Area(const std::string& localAuthorityCode) {
     std::string langValueWelsh = "Powys";
     area.setName(langCodeWelsh, langValueWelsh);
 */
-
+void Area::setName(std::string lang, std::string name) {
+//    this->names.push_back(std::make_tuple(lang, name));
+    this->names.insert({lang, name});
+}
 
 /*
   TODO: Area::getMeasure(key)

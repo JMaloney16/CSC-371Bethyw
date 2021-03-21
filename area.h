@@ -6,7 +6,7 @@
   | BETH YW? WELSH GOVERNMENT DATA PARSER |
   +---------------------------------------+
 
-  AUTHOR: <STUDENT NUMBER>
+  AUTHOR: 991384
 
   This file contains the Area class declaration. Area objects contain all the
   Measure objects for a given local area, along with names for that area and a
@@ -17,7 +17,7 @@
  */
 
 #include <string>
-
+#include <unordered_map>
 #include "measure.h"
 
 /*
@@ -30,7 +30,15 @@
   to overload.
 */
 class Area {
-  Area(const std::string& localAuthorityCode);
+private:
+    std::string localAuthorityCode;
+//    std::vector <std::tuple<std::string, std::string>> names;
+    std::unordered_map<std::string,std::string> names;
+public:
+    Area(const std::string &localAuthorityCode);
+    const std::string& getLocalAuthorityCode();
+    void setName(std::string lang, std::string name);
+    const std::string& getName(std::string lang);
 };
 
 #endif // AREA_H_
