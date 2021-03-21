@@ -6,7 +6,7 @@
   | BETH YW? WELSH GOVERNMENT DATA PARSER |
   +---------------------------------------+
 
-  AUTHOR: <STUDENT NUMBER>
+  AUTHOR: 991384
 
   The file contains the Areas class implementation. Areas are the top
   level of the data structure in Beth Yw? for now.
@@ -45,7 +45,7 @@ using json = nlohmann::json;
     Areas data = Areas();
 */
 Areas::Areas() {
-  throw std::logic_error("Areas::Areas() has not been implemented!");
+  //throw std::logic_error("Areas::Areas() has not been implemented!");
 }
 
 /*
@@ -73,7 +73,13 @@ Areas::Areas() {
     Area area(localAuthorityCode);
     data.setArea(localAuthorityCode, area);
 */
-
+void Areas::setArea(std::string localAuthorityCode, Area area){
+    auto searchAreas = areas.find(localAuthorityCode);
+    if (searchAreas != areas.end()){
+        areas.erase(localAuthorityCode);
+    }
+        areas.add(localAuthorityCode, area);
+}
 
 /*
   TODO: Areas::getArea(localAuthorityCode)
@@ -98,6 +104,14 @@ Areas::Areas() {
     ...
     Area area2 = areas.getArea("W06000023");
 */
+Area Areas::getArea(std::string localAuthorityCode) {
+    auto searchAreas = areas.find(localAuthorityCode);
+    if (searchAreas == areas.end()) {
+        throw std::out_of_range(localAuthorityCode + ": does not exist!");
+    } else {
+        return *searchAreas;
+    }
+}
 
 
 /*
@@ -118,7 +132,9 @@ Areas::Areas() {
     
     auto size = areas.size(); // returns 1
 */
-
+unsigned int Areas::size() {
+    return areas.size();
+}
 
 /*
   TODO: Areas::populateFromAuthorityCodeCSV(is, cols, areasFilter)

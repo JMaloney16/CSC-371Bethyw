@@ -6,7 +6,7 @@
   | BETH YW? WELSH GOVERNMENT DATA PARSER |
   +---------------------------------------+
 
-  AUTHOR: <STUDENT NUMBER>
+  AUTHOR: 991384
 
   This file contains the Areas class, which is responsible for parsing data
   from a standard input stream and converting it into a series of objects:
@@ -30,6 +30,7 @@
 #include <string>
 #include <tuple>
 #include <unordered_set>
+#include <unordered_map>
 
 #include "datasets.h"
 #include "area.h"
@@ -47,12 +48,8 @@ using YearFilterTuple = std::tuple<unsigned int, unsigned int>;
 
 /*
   An alias for the data within an Areas object stores Area objects.
-
-  TODO: you should remove the declaration of the Null class below, and set
-  AreasContainer to a valid Standard Library container of your choosing.
 */
-class Null { };
-using AreasContainer = Null;
+using AreasContainer = std::unordered_map<std::string, Area>;
 
 /*
   Areas is a class that stores all the data categorised by area. The 
@@ -69,30 +66,38 @@ using AreasContainer = Null;
   to overload.
 */
 class Areas {
+private:
+    AreasContainer areas;
 public:
-  Areas();
-  
-  void populateFromAuthorityCodeCSV(
-      std::istream& is,
-      const BethYw::SourceColumnMapping& cols,
-      const StringFilterSet * const areas = nullptr)
-      noexcept(false);
+    Areas();
 
-  void populate(
-      std::istream& is,
-      const BethYw::SourceDataType& type,
-      const BethYw::SourceColumnMapping& cols) noexcept(false);
+    void setArea(std::string localAuthorityCode, Area area);
 
-  void populate(
-      std::istream& is,
-      const BethYw::SourceDataType& type,
-      const BethYw::SourceColumnMapping& cols,
-      const StringFilterSet * const areasFilter = nullptr,
-      const StringFilterSet * const measuresFilter = nullptr,
-      const YearFilterTuple * const yearsFilter = nullptr)
-      noexcept(false);
+    Area getArea(std::string localAuthorityCode);
 
-  std::string toJSON() const;
+    unsigned int size();
+
+    void populateFromAuthorityCodeCSV(
+            std::istream &is,
+            const BethYw::SourceColumnMapping &cols,
+            const StringFilterSet *const areas = nullptr)
+    noexcept(false);
+
+    void populate(
+            std::istream &is,
+            const BethYw::SourceDataType &type,
+            const BethYw::SourceColumnMapping &cols) noexcept(false);
+
+    void populate(
+            std::istream &is,
+            const BethYw::SourceDataType &type,
+            const BethYw::SourceColumnMapping &cols,
+            const StringFilterSet *const areasFilter = nullptr,
+            const StringFilterSet *const measuresFilter = nullptr,
+            const YearFilterTuple *const yearsFilter = nullptr)
+    noexcept(false);
+
+    std::string toJSON() const;
 };
 
 #endif // AREAS_H
