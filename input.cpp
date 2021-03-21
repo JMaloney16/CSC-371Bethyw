@@ -6,7 +6,7 @@
   | BETH YW? WELSH GOVERNMENT DATA PARSER |
   +---------------------------------------+
 
-  AUTHOR: <STUDENT NUMBER>
+  AUTHOR: 991384
 
   This file contains the code responsible for opening and closing file
   streams. The actual handling of the data from that stream is handled
@@ -27,8 +27,8 @@
   @param source
     A unique identifier for a source (i.e. the location).
 */
-InputSource::InputSource(const std::string& source) {
-  throw std::logic_error("InputSource::InputSource() has not been implemented!");
+InputSource::InputSource(const std::string& source) : source(source) {
+
 }
 
 /*
@@ -39,6 +39,9 @@ InputSource::InputSource(const std::string& source) {
   @return
     A non-modifable value for the source passed into the construtor.
 */
+const std::string& InputSource::getSource() {
+    return this->source;
+}
 
 
 /*
@@ -53,7 +56,7 @@ InputSource::InputSource(const std::string& source) {
     InputFile input("data/areas.csv");
 */
 InputFile::InputFile(const std::string& filePath) : InputSource(filePath) {
-  throw std::logic_error("InputFile::InputFile() has not been implemented!");
+//  throw std::logic_error("InputFile::InputFile() has not been implemented!");
 }
 
 /*
@@ -73,3 +76,15 @@ InputFile::InputFile(const std::string& filePath) : InputSource(filePath) {
     InputFile input("data/areas.csv");
     input.open();
 */
+std::istream& InputFile::open() {
+    this->inputStream.open(this->getSource());
+    if (!this->inputStream.is_open()) {
+        throw (std::runtime_error("InputFile::open: Failed to open file " + this->getSource()));
+    }
+//    try {
+//    } catch (inputStream.fail()) {
+//        throw (std::runtime_error("InputFile::open: Failed to open file " + this->getSource()));
+//    }
+    return this->inputStream;
+//
+}

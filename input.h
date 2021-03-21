@@ -6,7 +6,7 @@
   | BETH YW? WELSH GOVERNMENT DATA PARSER |
   +---------------------------------------+
 
-  AUTHOR: <STUDENT NUMBER>
+  AUTHOR: 991384
 
   This file contains declarations for the input source handlers. There are
   two classes: InputSource and InputFile. InputSource is abstract (i.e. it
@@ -22,7 +22,9 @@
  */
 
 #include <string>
+#include <iostream>
 #include <fstream>
+#include <memory>
 
 /*
   InputSource is an abstract/purely virtual base class for all input source 
@@ -37,6 +39,9 @@
 class InputSource {
 protected:
   InputSource(const std::string& source);
+  const std::string source;
+public:
+    const std::string& getSource();
 };
 
 /*
@@ -48,8 +53,12 @@ protected:
   to overload.
 */
 class InputFile : public InputSource {
+private:
+  std::ifstream inputStream;
+
 public:
   InputFile(const std::string& filePath);
+  std::istream& open();
 };
 
 #endif // INPUT_H_
