@@ -133,10 +133,18 @@ void Area::setName(std::string lang, std::string name) {
 
 }
 
+/**
+ * Get all of the names in the Area
+ * @return A map of all names in the area
+ */
 const std::unordered_map<std::string, std::string>& Area::getNames() {
     return names;
 }
 
+/**
+ * Get all of the measures associated with the area
+ * @return A map of all measures stored in the area
+ */
 const std::unordered_map<std::string,Measure>& Area::getMeasures() {
     return measures;
 }

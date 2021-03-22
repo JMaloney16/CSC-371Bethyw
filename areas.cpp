@@ -205,10 +205,10 @@ void Areas::populateFromAuthorityCodeCSV(
 
     std::string currentLine, areaCode, engName, cymName;
     std::getline(is, currentLine);
-    Area tempArea = Area("Temp");
+
+    // Check if filter exists, done outside loop to reduce calls
     bool hasFilter = false;
     if (areasFilter != nullptr && !(areasFilter->empty())) {
-//        if (!(areasFilter->empty())) { hasFilter = true; }
         hasFilter = true;
     }
     while (is.peek() != EOF) {
@@ -220,7 +220,7 @@ void Areas::populateFromAuthorityCodeCSV(
         currentLine.erase(0, currentLine.find(',') + 1);
         cymName = currentLine;
         if (!hasFilter) {
-            tempArea = Area(areaCode);
+            Area tempArea = Area(areaCode);
             tempArea.setName("eng", engName);
             tempArea.setName("cym", cymName);
             this->setArea(areaCode, tempArea);
