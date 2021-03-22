@@ -47,7 +47,7 @@ using json = nlohmann::json;
     Areas data = Areas();
 */
 Areas::Areas() {
-  //throw std::logic_error("Areas::Areas() has not been implemented!");
+    //throw std::logic_error("Areas::Areas() has not been implemented!");
 }
 
 /*
@@ -75,17 +75,17 @@ Areas::Areas() {
     Area area(localAuthorityCode);
     data.setArea(localAuthorityCode, area);
 */
-void Areas::setArea(std::string localAuthorityCode, Area area){
+void Areas::setArea(std::string localAuthorityCode, Area area) {
 //    areasContainer.insert_or_assign(localAuthorityCode, area);
     auto searchAreas = areasContainer.find(localAuthorityCode);
-    if (searchAreas != areasContainer.end()){
+    if (searchAreas != areasContainer.end()) {
 //        areasContainer.erase(localAuthorityCode);
         //Iterate through area's measures and names and add them to searchAreas pointer
-        for (auto& iterate: area.getMeasures()){
-            searchAreas->second.setMeasure(iterate.first,iterate.second);
+        for (auto &iterate: area.getMeasures()) {
+            searchAreas->second.setMeasure(iterate.first, iterate.second);
         }
-        for (auto& iterate: area.getNames()){
-            searchAreas->second.setName(iterate.first,iterate.second);
+        for (auto &iterate: area.getNames()) {
+            searchAreas->second.setName(iterate.first, iterate.second);
         }
     } else {
         areasContainer.emplace(localAuthorityCode, area);
@@ -115,10 +115,10 @@ void Areas::setArea(std::string localAuthorityCode, Area area){
     ...
     Area area2 = areas.getArea("W06000023");
 */
-Area& Areas::getArea(std::string localAuthorityCode) {
+Area &Areas::getArea(std::string localAuthorityCode) {
     auto searchAreas = areasContainer.find(localAuthorityCode);
     if (searchAreas == areasContainer.end()) {
-        throw std::out_of_range(localAuthorityCode + ": does not exist!");
+        throw std::out_of_range("No area found matching " + localAuthorityCode);
     } else {
         return searchAreas->second;
     }
@@ -199,28 +199,39 @@ unsigned int Areas::size() {
     std::out_of_range if there are not enough columns in cols
 */
 void Areas::populateFromAuthorityCodeCSV(
-    std::istream &is,
-    const BethYw::SourceColumnMapping &cols,
-    const StringFilterSet * const areasFilter) {
-//  throw std::logic_error(
-//    "Areas::populateFromAuthorityCodeCSV() has not been implemented!");
+        std::istream &is,
+        const BethYw::SourceColumnMapping &cols,
+        const StringFilterSet *const areasFilter) {
+
     std::string currentLine, areaCode, engName, cymName;
     std::getline(is, currentLine);
-    while(is.peek()!=EOF){
-        std::getline(is,currentLine);
+    Area tempArea = Area("Temp");
+    bool hasFilter = false;
+    if (areasFilter != nullptr && !(areasFilter->empty())) {
+//        if (!(areasFilter->empty())) { hasFilter = true; }
+        hasFilter = true;
+    }
+    while (is.peek() != EOF) {
+        std::getline(is, currentLine);
         //Split the string into 3 sections, discarding the commas
-//        std::sscanf(currentLine.c_str(), "%[^,]%*[,]%[^,]%*[,]%s", &areaCode, &engName, &cymName);
         areaCode = currentLine.substr(0, currentLine.find(','));
-        currentLine.erase(0, currentLine.find(',')+1);
+        currentLine.erase(0, currentLine.find(',') + 1);
         engName = currentLine.substr(0, currentLine.find(','));
-        currentLine.erase(0, currentLine.find(',')+1);
+        currentLine.erase(0, currentLine.find(',') + 1);
         cymName = currentLine;
-        auto searchAreas = areasFilter->find(areaCode);
-        if (searchAreas != areasFilter->end()) {
-            Area tempArea = Area(areaCode);
+        if (!hasFilter) {
+            tempArea = Area(areaCode);
             tempArea.setName("eng", engName);
             tempArea.setName("cym", cymName);
             this->setArea(areaCode, tempArea);
+        } else {
+            auto searchAreas = areasFilter->find(areaCode);
+            if (searchAreas != areasFilter->end()) {
+                Area tempArea = Area(areaCode);
+                tempArea.setName("eng", engName);
+                tempArea.setName("cym", cymName);
+                this->setArea(areaCode, tempArea);
+            }
         }
     }
 }
@@ -453,11 +464,11 @@ void Areas::populateFromAuthorityCodeCSV(
 void Areas::populate(std::istream &is,
                      const BethYw::SourceDataType &type,
                      const BethYw::SourceColumnMapping &cols) {
-  if (type == BethYw::AuthorityCodeCSV) {
-    populateFromAuthorityCodeCSV(is, cols);
-  } else {
-    throw std::runtime_error("Areas::populate: Unexpected data type");
-  }
+    if (type == BethYw::AuthorityCodeCSV) {
+        populateFromAuthorityCodeCSV(is, cols);
+    } else {
+        throw std::runtime_error("Areas::populate: Unexpected data type");
+    }
 }
 
 /*
@@ -543,18 +554,17 @@ void Areas::populate(std::istream &is,
       &yearsFilter);
 */
 void Areas::populate(
-    std::istream &is,
-    const BethYw::SourceDataType &type,
-    const BethYw::SourceColumnMapping &cols,
-    const StringFilterSet * const areasFilter,
-    const StringFilterSet * const measuresFilter,
-    const YearFilterTuple * const yearsFilter)
-     {
-  if (type == BethYw::AuthorityCodeCSV) {
-    populateFromAuthorityCodeCSV(is, cols, areasFilter);
-  } else {
-    throw std::runtime_error("Areas::populate: Unexpected data type");
-  }
+        std::istream &is,
+        const BethYw::SourceDataType &type,
+        const BethYw::SourceColumnMapping &cols,
+        const StringFilterSet *const areasFilter,
+        const StringFilterSet *const measuresFilter,
+        const YearFilterTuple *const yearsFilter) {
+    if (type == BethYw::AuthorityCodeCSV) {
+        populateFromAuthorityCodeCSV(is, cols, areasFilter);
+    } else {
+        throw std::runtime_error("Areas::populate: Unexpected data type");
+    }
 }
 
 /*
@@ -631,9 +641,9 @@ void Areas::populate(
     std::cout << data.toJSON();
 */
 std::string Areas::toJSON() const {
-  json j;
-  
-  return j.dump();
+    json j;
+
+    return j.dump();
 }
 
 /*
