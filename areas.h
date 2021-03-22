@@ -73,7 +73,7 @@ public:
 
     void setArea(std::string localAuthorityCode, Area area);
 
-    Area getArea(std::string localAuthorityCode);
+    Area& getArea(std::string localAuthorityCode);
 
     unsigned int size();
 

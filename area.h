@@ -45,12 +45,18 @@ private:
 public:
     Area(const std::string &localAuthorityCode);
     const std::string& getLocalAuthorityCode();
+
+    const std::unordered_map<std::string,std::string>& getNames();
     void setName(std::string lang, std::string name);
     const std::string& getName(std::string lang);
 
-    Measure getMeasure(std::string key);
+    const std::unordered_map<std::string,Measure>& getMeasures();
+    Measure& getMeasure(std::string key);
     void setMeasure(std::string codename, Measure measure);
     unsigned int size();
+
+    friend bool operator==(const Area &lhs, const Area &rhs);
+
 };
 
 #endif // AREA_H_

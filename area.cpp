@@ -23,6 +23,7 @@
 #include <algorithm>
 #include "area.h"
 
+
 /*
   TODO: Area::Area(localAuthorityCode)
 
@@ -116,12 +117,28 @@ const std::string& Area::getName(std::string lang) {
     area.setName(langCodeWelsh, langValueWelsh);
 */
 void Area::setName(std::string lang, std::string name) {
-    if ((std::find_if(lang.begin(), lang.end(), non_alphabetic()) != lang.end()) || lang.length() != 3){
+    if ((std::find_if(lang.begin(), lang.end(), non_alphabetic()) != lang.end()) || (lang.length() != 3)){
         throw std::invalid_argument("Area::setName: Language code must be three alphabetical letters only");
     }
+
     // https://stackoverflow.com/questions/313970/how-to-convert-stdstring-to-lower-case
     std::transform(lang.begin(), lang.end(), lang.begin(), [](unsigned char c){return std::tolower(c); });
-    this->names.insert({lang, name});
+
+    auto searchNames = names.find(lang);
+    if (searchNames != names.end()){
+        searchNames->second = name;
+    } else {
+        this->names.emplace(lang, name);
+    }
+
+}
+
+const std::unordered_map<std::string, std::string>& Area::getNames() {
+    return names;
+}
+
+const std::unordered_map<std::string,Measure>& Area::getMeasures() {
+    return measures;
 }
 
 /*
@@ -148,7 +165,7 @@ void Area::setName(std::string lang, std::string name) {
     ...
     auto measure2 = area.getMeasure("pop");
 */
-Measure Area::getMeasure(std::string key) {
+Measure& Area::getMeasure(std::string key) {
     auto searchMeasures = measures.find(key);
     if (searchMeasures == measures.end()) {
         throw std::out_of_range("No measure found matching " + key);
@@ -192,10 +209,17 @@ Measure Area::getMeasure(std::string key) {
 void Area::setMeasure(std::string codename, Measure measure) {
 //    measures[codename] = measure;
     auto searchMeasures = measures.find(codename);
+    std::transform(codename.begin(), codename.end(), codename.begin(),
+                   [](unsigned char c){return std::tolower(c); });
     if (searchMeasures != measures.end()){
-        measures.erase(codename);
+//        measures.erase(codename);
+        //Add to existing measure
+        for (auto& iterate : measure.getValues()) {
+            searchMeasures->second.setValue(iterate.first, iterate.second);
+        }
+    } else {
+        measures.emplace(codename, measure);
     }
-    measures.insert(std::make_pair(codename, measure));
 }
 
 
@@ -282,3 +306,11 @@ unsigned int Area::size() {
 
     bool eq = area1 == area2;
 */
+bool operator==(const Area& lhs, const Area& rhs) {
+    if (lhs.localAuthorityCode == rhs.localAuthorityCode &&
+    lhs.names == rhs.names && lhs.measures == rhs.measures) {
+        return true;
+    } else {
+        return false;
+    }
+}

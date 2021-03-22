@@ -20,6 +20,7 @@
 
 #include <stdexcept>
 #include <string>
+#include <algorithm>
 
 #include "measure.h"
 
@@ -113,6 +114,9 @@ void Measure::setLabel(std::string label) {
     this->label = label;
 }
 
+const std::map<unsigned int, double>& Measure::getValues() {
+    return values;
+}
 
 /*
   TODO: Measure::getValue(key)
@@ -325,4 +329,10 @@ const double Measure::getAverage() {
     true if both Measure objects have the same codename, label and data; false
     otherwise
 */
-
+bool operator==(const Measure& lhs, const Measure& rhs) {
+    if (lhs.codename == rhs.codename && lhs.label == rhs.label && lhs.values == rhs.values) {
+        return true;
+    } else {
+        return false;
+    }
+}

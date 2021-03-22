@@ -79,9 +79,17 @@ void Areas::setArea(std::string localAuthorityCode, Area area){
 //    areasContainer.insert_or_assign(localAuthorityCode, area);
     auto searchAreas = areasContainer.find(localAuthorityCode);
     if (searchAreas != areasContainer.end()){
-        areasContainer.erase(localAuthorityCode);
+//        areasContainer.erase(localAuthorityCode);
+        //Iterate through area's measures and names and add them to searchAreas pointer
+        for (auto& iterate: area.getMeasures()){
+            searchAreas->second.setMeasure(iterate.first,iterate.second);
+        }
+        for (auto& iterate: area.getNames()){
+            searchAreas->second.setName(iterate.first,iterate.second);
+        }
+    } else {
+        areasContainer.emplace(localAuthorityCode, area);
     }
-        areasContainer.insert(std::make_pair(localAuthorityCode, area));
 }
 
 /*
@@ -107,7 +115,7 @@ void Areas::setArea(std::string localAuthorityCode, Area area){
     ...
     Area area2 = areas.getArea("W06000023");
 */
-Area Areas::getArea(std::string localAuthorityCode) {
+Area& Areas::getArea(std::string localAuthorityCode) {
     auto searchAreas = areasContainer.find(localAuthorityCode);
     if (searchAreas == areasContainer.end()) {
         throw std::out_of_range(localAuthorityCode + ": does not exist!");

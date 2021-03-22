@@ -30,16 +30,31 @@ private:
     std::string codename, label;
     std::map<unsigned int, double> values;
 public:
-  Measure(std::string code, const std::string &label);
-  std::string getCodename();
-  std::string getLabel();
-  void setLabel(std::string label);
-  double getValue(unsigned int key);
-  void setValue(unsigned int key, double value);
-  unsigned int size();
-  const double getDifference();
-  const double getDifferenceAsPercentage();
-  const double getAverage();
+    Measure(std::string code, const std::string &label);
+
+    std::string getCodename();
+
+    std::string getLabel();
+
+    void setLabel(std::string label);
+
+    const std::map<unsigned int, double>& getValues();
+
+    double getValue(unsigned int key);
+
+    void setValue(unsigned int key, double value);
+
+    unsigned int size();
+
+    const double getDifference();
+
+    const double getDifferenceAsPercentage();
+
+    const double getAverage();
+
+
+//    friend bool std::ostream &operator <<(std::ostream& os, Measure measure);
+    friend bool operator==(const Measure &lhs, const Measure &rhs);
 };
 
 #endif // MEASURE_H_
