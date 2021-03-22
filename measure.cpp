@@ -21,6 +21,8 @@
 #include <stdexcept>
 #include <string>
 #include <algorithm>
+#include <iomanip>
+#include <iostream>
 
 #include "measure.h"
 
@@ -224,7 +226,7 @@ unsigned int Measure::size() {
     measure.setValue(1999, 12345679.9);
     auto diff = measure.getDifference(); // returns 1.0
 */
-const double Measure::getDifference() {
+double Measure::getDifference() const {
     if (values.end()->second - values.begin()->second == 0) {
         return 0;
     }else {
@@ -249,7 +251,7 @@ const double Measure::getDifference() {
     measure.setValue(2010, 12345679.9);
     auto diff = measure.getDifferenceAsPercentage();
 */
-const double Measure::getDifferenceAsPercentage() {
+double Measure::getDifferenceAsPercentage() const {
     double beginValue = values.begin()->second;
     double endValue = values.end()->second;
     return endValue / beginValue;
@@ -271,7 +273,7 @@ const double Measure::getDifferenceAsPercentage() {
     measure.setValue(1999, 12345679.9);
     auto diff = measure.getDifference(); // returns 1
 */
-const double Measure::getAverage() {
+double Measure::getAverage() const {
     double average = 0;
     for (auto it = values.begin(); it != values.end(); ++it) {
         average += it->first;
@@ -315,7 +317,20 @@ const double Measure::getAverage() {
     measure.setValue(1999, 12345678.9);
     std::cout << measure << std::end;
 */
+std::ostream& operator<<(std::ostream& os, const Measure& measure) {
+    for (auto year : measure.values) {
+        os << std::setw(PADDING_SIZE) << year.first;
+    }
+    os << std::setw(PADDING_SIZE) << "Average" << std::setw(PADDING_SIZE) << 
+    "Diff." << std::setw(PADDING_SIZE) << "% Diff" << std::endl;
+    for (auto value : measure.values) {
+        os << std::setw(PADDING_SIZE) << value.second;
+    }
+    os << std::setw(PADDING_SIZE) << measure.getAverage() << std::setw(PADDING_SIZE)
+    << measure.getDifference() << std::setw(PADDING_SIZE) << measure.getDifferenceAsPercentage();
 
+    return os;
+}
 
 /*
   TODO: operator==(lhs, rhs)

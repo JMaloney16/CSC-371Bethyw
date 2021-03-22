@@ -17,6 +17,8 @@
 #include <string>
 #include <map>
 
+
+const int PADDING_SIZE = 10;
 /*
   The Measure class contains a measure code, label, and a container for readings
   from across a number of years.
@@ -46,14 +48,14 @@ public:
 
     unsigned int size();
 
-    const double getDifference();
+    double getDifference() const;
 
-    const double getDifferenceAsPercentage();
+    double getDifferenceAsPercentage() const;
 
-    const double getAverage();
+    double getAverage() const;
 
 
-//    friend bool std::ostream &operator <<(std::ostream& os, Measure measure);
+    friend std::ostream& operator<<(std::ostream& os, const Measure& measure);
     friend bool operator==(const Measure &lhs, const Measure &rhs);
 };
 
