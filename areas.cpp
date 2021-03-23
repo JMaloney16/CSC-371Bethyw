@@ -560,6 +560,7 @@ void Areas::populate(
         const StringFilterSet *const areasFilter,
         const StringFilterSet *const measuresFilter,
         const YearFilterTuple *const yearsFilter) {
+
     if (type == BethYw::AuthorityCodeCSV) {
         populateFromAuthorityCodeCSV(is, cols, areasFilter);
     } else {

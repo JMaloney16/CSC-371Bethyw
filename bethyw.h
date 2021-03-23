@@ -66,6 +66,8 @@ std::unordered_set<std::string> parseMeasuresArg(cxxopts::ParseResult& args);
 
 std::tuple<unsigned int, unsigned int> parseYearsArg(cxxopts::ParseResult& args);
 
+void loadAreas(Areas areas, std::string dir, std::unordered_set<std::string> areasFilter);
+
 bool compareChar(unsigned char a, unsigned char b);
 
 bool compareStringNoCase(std::string const& string1, std::string const& string2);

@@ -66,10 +66,10 @@ int BethYw::run(int argc, char *argv[]) {
     std::string dir = args["dir"].as<std::string>() + DIR_SEP;
 
     // Parse other arguments and import data
-     auto datasetsToImport = BethYw::parseDatasetsArg(args);
-     auto areasFilter      = BethYw::parseAreasArg(args);
-     auto measuresFilter   = BethYw::parseMeasuresArg(args);
-     auto yearsFilter      = BethYw::parseYearsArg(args);
+    auto datasetsToImport = BethYw::parseDatasetsArg(args);
+    auto areasFilter = BethYw::parseAreasArg(args);
+    auto measuresFilter = BethYw::parseMeasuresArg(args);
+    auto yearsFilter = BethYw::parseYearsArg(args);
 
     Areas data = Areas();
 
@@ -198,7 +198,7 @@ std::vector <BethYw::InputFileSource> BethYw::parseDatasetsArg(
     // an argument. Check the documentation! Read it and understand it.
     try {
         inputDatasets = args["datasets"].as < std::vector < std::string >> ();
-    } catch (cxxopts::OptionParseException const&) {
+    } catch (cxxopts::OptionParseException const &) {
         inputDatasets.push_back("all");
     }
 
@@ -266,7 +266,7 @@ std::unordered_set <std::string> BethYw::parseAreasArg(
     std::unordered_set <std::string> areas;
 
     // Retrieve the areas argument like so:
-    auto temp = args["areas"].as<std::vector<std::string>>();
+    auto temp = args["areas"].as < std::vector < std::string >> ();
 
     for (size_t i = 0; i < temp.size(); i++) {
         if (compareStringNoCase(temp[i], "all")) {
@@ -357,7 +357,7 @@ std::tuple<unsigned int, unsigned int> BethYw::parseYearsArg(
         case 4:
             try {
                 tempYear1 = std::stoi(temp);
-            } catch (std::invalid_argument const&) {
+            } catch (std::invalid_argument const &) {
                 throw (std::invalid_argument(invalidInput));
             }
             years = std::make_tuple(tempYear1, tempYear1);
@@ -365,18 +365,18 @@ std::tuple<unsigned int, unsigned int> BethYw::parseYearsArg(
         case 9:
             try {
                 tempYear1 = std::stoi(temp.substr(0, temp.find("-")));
-                tempYear2 = std::stoi(temp.substr(temp.find("-")+1, temp.length()));
-            } catch (std::invalid_argument const&) {
+                tempYear2 = std::stoi(temp.substr(temp.find("-") + 1, temp.length()));
+            } catch (std::invalid_argument const &) {
                 throw (std::invalid_argument(invalidInput + "Correct Case"));
             }
-            years = std::make_tuple(tempYear1,tempYear2);
+            years = std::make_tuple(tempYear1, tempYear2);
             break;
         case 0:
-            years = std::make_tuple(0,0);
+            years = std::make_tuple(0, 0);
             break;
         case 1:
             if (temp == "0") {
-                years = std::make_tuple(0,0);
+                years = std::make_tuple(0, 0);
             } else {
                 throw (std::invalid_argument(invalidInput));
             }
@@ -385,11 +385,11 @@ std::tuple<unsigned int, unsigned int> BethYw::parseYearsArg(
             try {
                 tempYear1 = std::stoi(temp.substr(0, temp.find("-")));
                 tempYear2 = std::stoi(temp.substr(temp.find("-"), temp.length()));
-            } catch (std::invalid_argument const&) {
+            } catch (std::invalid_argument const &) {
                 throw (std::invalid_argument(invalidInput));
             }
             if (tempYear1 == 0 && tempYear2 == 0) {
-                years = std::make_tuple(tempYear1,tempYear2);
+                years = std::make_tuple(tempYear1, tempYear2);
             } else {
                 throw (std::invalid_argument(invalidInput));
             }
@@ -437,10 +437,14 @@ std::tuple<unsigned int, unsigned int> BethYw::parseYearsArg(
 
     BethYw::loadAreas(areas, "data", BethYw::parseAreasArg(args));
 */
-// void BethYw::loadAreas(
-//   Areas area, std::string dir, std::unordered_set<std::string> areasFilter) {
+void BethYw::loadAreas(
+        Areas areas, std::string dir, std::unordered_set <std::string> areasFilter) {
+    InputFile areasFile = InputFile(dir + "/" + InputFiles::AREAS.FILE);
+    std::istream &is = areasFile.open();
 
-//   }
+    areas.populate(is, InputFiles::AREAS.PARSER, InputFiles::AREAS.COLS, &areasFilter, nullptr, nullptr);
+
+}
 
 
 /*
