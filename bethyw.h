@@ -24,6 +24,7 @@
 #include <iostream>
 
 #include "datasets.h"
+#include "areas.h"
 
 const char DIR_SEP =
 #ifdef _WIN32
