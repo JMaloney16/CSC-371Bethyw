@@ -55,6 +55,7 @@ public:
     void setMeasure(std::string codename, Measure measure);
     unsigned int size();
 
+    friend std::ostream& operator<<(std::ostream& os, const Area& area);
     friend bool operator==(const Area &lhs, const Area &rhs);
 
 };

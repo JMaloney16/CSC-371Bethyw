@@ -98,6 +98,8 @@ public:
     noexcept(false);
 
     std::string toJSON() const;
+
+    friend std::ostream& operator<<(std::ostream& os, const Areas& area);
 };
 
 #endif // AREAS_H

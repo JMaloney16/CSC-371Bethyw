@@ -19,6 +19,7 @@
 
 #include <stdexcept>
 #include <string>
+#include <iostream>
 #include <unordered_map>
 #include <algorithm>
 #include "area.h"
@@ -289,7 +290,23 @@ unsigned int Area::size() {
     area.setName("eng", "Powys");
     std::cout << area << std::endl;
 */
+std::ostream& operator<<(std::ostream& os, const Area& area) {
 
+//    for (auto name : area.names) {
+//        os << name.second << " ";
+//        if (name != area.names.end()) {
+//            os << "/";
+//        }
+//    }
+    os << area.names.find("eng")->second << " / " << area.names.find("cym")->second;
+
+    os << " (" << area.localAuthorityCode << ")" << std::endl;
+    for (auto measure : area.measures) {
+        os << measure.second << std::endl;
+    }
+
+    return os;
+}
 
 /*
   TODO: operator==(lhs, rhs)

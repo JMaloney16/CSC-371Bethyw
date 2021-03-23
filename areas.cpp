@@ -753,5 +753,10 @@ std::string Areas::toJSON() const {
     Areas areas();
     std::cout << areas << std::end;
 */
-
+std::ostream& operator<<(std::ostream& os, const Areas& areas) {
+    for (auto area : areas.areasContainer) {
+        os << area.second << std::endl;
+    }
+    return os;
+}
 

@@ -318,6 +318,7 @@ double Measure::getAverage() const {
     std::cout << measure << std::end;
 */
 std::ostream& operator<<(std::ostream& os, const Measure& measure) {
+    os << measure.label << " (" << measure.codename << ")" << std::endl;
     for (auto year : measure.values) {
         os << std::setw(PADDING_SIZE) << year.first;
     }
