@@ -642,7 +642,19 @@ void Areas::populate(
     std::cout << data.toJSON();
 */
 std::string Areas::toJSON() const {
+    // This hurt to write as much as it will hurt you to read.
     json j;
+    for (auto area : this->areasContainer) { // Get each area
+        j[area.second.getLocalAuthorityCode()];
+        for (auto name : area.second.getNames()) { // Iterate through each name pair
+            j[area.second.getLocalAuthorityCode()]["names"][name.first][name.second];
+        }
+        for (auto measures : area.second.getMeasures()) { // Get each Measure object
+            for (auto measure : measures.second.getValues()) { // Get each year/value pair
+                j[area.second.getLocalAuthorityCode()]["measures"][measures.first][measure.first][measure.second];
+            }
+        }
+    }
 
     return j.dump();
 }
