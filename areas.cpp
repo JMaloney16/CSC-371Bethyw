@@ -340,7 +340,72 @@ void Areas::populateFromAuthorityCodeCSV(
       &measuresFilter,
       &yearsFilter);
 */
+void Areas::populateFromWelshStatsJSON(std::istream &is, const BethYw::SourceColumnMapping &cols,
+                                       const StringFilterSet *const areas, const StringFilterSet *const measuresFilter,
+                                       const YearFilterTuple *const yearsFilter) {
+    bool areasFilterExists = false, measuresFilterExists = false, yearsFilterExists = false;
+    json j;
+    is >> j;
 
+    if (areas != nullptr) {
+        if (!areas->empty()) {
+            areasFilterExists = true;
+        }
+    }
+    if (measuresFilter != nullptr) {
+        if (!measuresFilter->empty()) {
+            measuresFilterExists = true;
+        }
+    }
+    if (yearsFilter != nullptr) {
+        unsigned int tempZero = 0;
+        if (*yearsFilter != std::make_tuple(tempZero, tempZero)) {
+            yearsFilterExists = true;
+        }
+    }
+    for (auto &el : j["value"].items()) {
+        bool filterCheck = false;
+        auto &data = el.value();
+        std::string localAuthorityCode = data[cols.find(BethYw::AUTH_CODE)->second];
+        std::string measureCode = std::string(data[cols.find(BethYw::MEASURE_CODE)->second]);
+        std::transform(measureCode.begin(), measureCode.end(), measureCode.begin(),
+                       [](unsigned char c) { return std::tolower(c); });
+        unsigned int yearCode = std::stoi(std::string((data[cols.find(BethYw::YEAR)->second])));
+
+        if (areasFilterExists) {
+            auto findIT = areas->find(localAuthorityCode);
+            if (findIT != areas->end()) {
+                if (measuresFilterExists) {
+                    auto findMeasure = measuresFilter->find(measureCode);
+                    if (findMeasure != measuresFilter->end()) {
+                        if (yearsFilterExists) {
+                            if (yearsFilterExists && (std::get<0>(*yearsFilter) <= yearCode)
+                                && (std::get<1>(*yearsFilter) >= yearCode)) {
+                                filterCheck = true;
+                            }
+                        } else { filterCheck = true; }
+                    }
+                } else { filterCheck = true; }
+            }
+        } else { filterCheck = true; }
+        if (filterCheck) {
+            Area tempArea = Area(localAuthorityCode);
+
+            tempArea.setName("eng", std::string(data[cols.find(BethYw::AUTH_NAME_ENG)->second]));
+
+
+            Measure tempMeasure = Measure(std::string(data[cols.find(BethYw::MEASURE_CODE)->second]),
+                                          std::string(data[cols.find(BethYw::MEASURE_NAME)->second]));
+
+            tempMeasure.setValue(yearCode, double(data[cols.find(BethYw::VALUE)->second]));
+            tempArea.setMeasure(std::string(data[cols.find(BethYw::MEASURE_CODE)->second]), tempMeasure);
+
+
+            this->setArea(localAuthorityCode, tempArea);
+        }
+    }
+
+}
 
 /*
   TODO: Areas::populateFromAuthorityByYearCSV(is,
@@ -642,17 +707,16 @@ void Areas::populate(
     std::cout << data.toJSON();
 */
 std::string Areas::toJSON() const {
-    // This hurt to write as much as it will hurt you to read.
+    // This hurt my head to write.
     json j;
     for (auto area : this->areasContainer) { // Get each area
-        j[area.second.getLocalAuthorityCode()];
-        for (auto name : area.second.getNames()) { // Iterate through each name pair
-            j[area.second.getLocalAuthorityCode()]["names"][name.first][name.second];
-        }
         for (auto measures : area.second.getMeasures()) { // Get each Measure object
             for (auto measure : measures.second.getValues()) { // Get each year/value pair
                 j[area.second.getLocalAuthorityCode()]["measures"][measures.first][measure.first][measure.second];
             }
+        }
+        for (auto name : area.second.getNames()) { // Iterate through each name pair
+            j[area.second.getLocalAuthorityCode()]["names"][name.first][name.second];
         }
     }
 
@@ -765,7 +829,7 @@ std::string Areas::toJSON() const {
     Areas areas();
     std::cout << areas << std::end;
 */
-std::ostream& operator<<(std::ostream& os, const Areas& areas) {
+std::ostream &operator<<(std::ostream &os, const Areas &areas) {
     for (auto area : areas.areasContainer) {
         os << area.second << std::endl;
     }

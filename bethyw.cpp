@@ -73,21 +73,21 @@ int BethYw::run(int argc, char *argv[]) {
 
     Areas data = Areas();
 
-    // BethYw::loadAreas(data, dir, areasFilter);
-    //
-    // BethYw::loadDatasets(data,
-    //                      dir,
-    //                      datasetsToImport,
-    //                      areasFilter,
-    //                      measuresFilter,
-    //                      yearsFilter);
+     BethYw::loadAreas(data, dir, areasFilter);
+
+//     BethYw::loadDatasets(data,
+//                          dir,
+//                          datasetsToImport,
+//                          areasFilter,
+//                          measuresFilter,
+//                          yearsFilter);
 
     if (args.count("json")) {
         // The output as JSON
         std::cout << data.toJSON() << std::endl;
     } else {
         // The output as tables
-        // std::cout << data << std::endl;
+         std::cout << data << std::endl;
     }
 
     return 0;

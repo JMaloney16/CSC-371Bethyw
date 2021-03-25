@@ -217,9 +217,9 @@ Measure& Area::getMeasure(std::string key) {
 */
 void Area::setMeasure(std::string codename, Measure measure) {
 //    measures[codename] = measure;
-    auto searchMeasures = measures.find(codename);
     std::transform(codename.begin(), codename.end(), codename.begin(),
                    [](unsigned char c){return std::tolower(c); });
+    auto searchMeasures = measures.find(codename);
     if (searchMeasures != measures.end()){
 //        measures.erase(codename);
         //Add to existing measure
