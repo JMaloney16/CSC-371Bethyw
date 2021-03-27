@@ -276,7 +276,7 @@ double Measure::getDifferenceAsPercentage() const {
 double Measure::getAverage() const {
     double average = 0;
     for (auto it = values.begin(); it != values.end(); ++it) {
-        average += it->first;
+        average += it->second;
     }
     return average/values.size();
 }
