@@ -67,7 +67,12 @@ std::unordered_set<std::string> parseMeasuresArg(cxxopts::ParseResult& args);
 
 std::tuple<unsigned int, unsigned int> parseYearsArg(cxxopts::ParseResult& args);
 
-void loadAreas(Areas areas, std::string dir, std::unordered_set<std::string> areasFilter);
+void loadAreas(Areas& areas, std::string dir, std::unordered_set<std::string> areasFilter);
+
+void loadDatasets(Areas& areas, std::string dir, std::vector<InputFileSource> datasetsToImport,
+                  std::unordered_set<std::string> areasFilter,
+                  std::unordered_set<std::string> measuresFilter,
+                  std::tuple<unsigned int, unsigned int> yearsFilter);
 
 bool compareChar(unsigned char a, unsigned char b);
 

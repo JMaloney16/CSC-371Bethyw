@@ -54,40 +54,48 @@
 */
 int BethYw::run(int argc, char *argv[]) {
     auto cxxopts = BethYw::cxxoptsSetup();
-    auto args = cxxopts.parse(argc, argv);
+//    cxxopts::ParseResult args;
+        auto args = cxxopts.parse(argc, argv);
+//    try {
+//    } catch (std::exception const exception) {
+//        throw (exception.what());
+//    }
 
     // Print the help usage if requested
     if (args.count("help")) {
         std::cerr << cxxopts.help() << std::endl;
         return 0;
     }
-
     // Parse data directory argument
     std::string dir = args["dir"].as<std::string>() + DIR_SEP;
 
     // Parse other arguments and import data
-    auto datasetsToImport = BethYw::parseDatasetsArg(args);
+    std::vector<BethYw::InputFileSource> datasetsToImport;
+    try {
+        datasetsToImport = BethYw::parseDatasetsArg(args);
+    } catch (std::invalid_argument const &) {
+        std::cerr << "Invalid arguments!" << std::endl;
+        return -1;
+    }
     auto areasFilter = BethYw::parseAreasArg(args);
     auto measuresFilter = BethYw::parseMeasuresArg(args);
     auto yearsFilter = BethYw::parseYearsArg(args);
 
     Areas data = Areas();
 
-     BethYw::loadAreas(data, dir, areasFilter);
-
-//     BethYw::loadDatasets(data,
-//                          dir,
-//                          datasetsToImport,
-//                          areasFilter,
-//                          measuresFilter,
-//                          yearsFilter);
-
+    BethYw::loadAreas(data, dir, areasFilter);
+    BethYw::loadDatasets(data,
+                          dir,
+                          datasetsToImport,
+                          areasFilter,
+                          measuresFilter,
+                          yearsFilter);
     if (args.count("json")) {
         // The output as JSON
-        std::cout << data.toJSON() << std::endl;
+        std::cerr << data.toJSON() << std::endl;
     } else {
         // The output as tables
-         std::cout << data << std::endl;
+        std::cerr << data << std::endl;
     }
 
     return 0;
@@ -198,10 +206,9 @@ std::vector <BethYw::InputFileSource> BethYw::parseDatasetsArg(
     // an argument. Check the documentation! Read it and understand it.
     try {
         inputDatasets = args["datasets"].as < std::vector < std::string >> ();
-    } catch (cxxopts::OptionParseException const &) {
+    } catch (std::domain_error const &) {
         inputDatasets.push_back("all");
     }
-
 
     // You now need to compare the strings in this vector to the keys in
     // allDatasets above. Populate datasetsToImport with the values
@@ -264,9 +271,14 @@ std::unordered_set <std::string> BethYw::parseAreasArg(
         cxxopts::ParseResult &args) {
     // The unordered set you will return
     std::unordered_set <std::string> areas;
+    std::vector<std::string> temp;
 
     // Retrieve the areas argument like so:
-    auto temp = args["areas"].as < std::vector < std::string >> ();
+    try {
+        temp = args["areas"].as<std::vector<std::string>>();
+    } catch (std::domain_error const &) {
+        temp.push_back("all");
+    }
 
     for (size_t i = 0; i < temp.size(); i++) {
         if (compareStringNoCase(temp[i], "all")) {
@@ -276,7 +288,6 @@ std::unordered_set <std::string> BethYw::parseAreasArg(
             areas.insert(temp[i]);
         }
     }
-
     return areas;
 }
 
@@ -308,7 +319,12 @@ std::unordered_set <std::string> BethYw::parseAreasArg(
 std::unordered_set <std::string> BethYw::parseMeasuresArg(
         cxxopts::ParseResult &args) {
     std::unordered_set <std::string> measures;
-    auto temp = args["measures"].as < std::vector < std::string >> ();
+    std::vector<std::string> temp;
+    try{
+        temp = args["measures"].as<std::vector<std::string>>();
+    } catch (std::domain_error const &) {
+        temp.push_back("all");
+    }
 
     for (size_t i = 0; i < temp.size(); i++) {
         if (compareStringNoCase(temp[i], "all")) {
@@ -350,8 +366,12 @@ std::tuple<unsigned int, unsigned int> BethYw::parseYearsArg(
     std::tuple<unsigned int, unsigned int> years;
     const std::string invalidInput("Invalid input for years argument");
     int tempYear1, tempYear2;
-
-    auto temp = args["years"].as<std::string>();
+    std::string temp;
+    try {
+        temp = args["years"].as<std::string>();
+    } catch (std::domain_error const &) {
+        return std::make_tuple(0, 0);
+    }
 
     switch (temp.length()) {
         case 4:
@@ -438,8 +458,8 @@ std::tuple<unsigned int, unsigned int> BethYw::parseYearsArg(
     BethYw::loadAreas(areas, "data", BethYw::parseAreasArg(args));
 */
 void BethYw::loadAreas(
-        Areas areas, std::string dir, std::unordered_set <std::string> areasFilter) {
-    InputFile areasFile = InputFile(dir + "/" + InputFiles::AREAS.FILE);
+        Areas &areas, std::string dir, std::unordered_set <std::string> areasFilter) {
+    InputFile areasFile = InputFile(dir + DIR_SEP + InputFiles::AREAS.FILE);
     std::istream &is = areasFile.open();
 
     areas.populate(is, InputFiles::AREAS.PARSER, InputFiles::AREAS.COLS, &areasFilter, nullptr, nullptr);
@@ -501,12 +521,16 @@ void BethYw::loadAreas(
       BethYw::parseMeasuresArg(args),
       BethYw::parseYearsArg(args));
 */
-// void BethYw::loadDatasets(
-//   Areas areas, std::string dir, std::vector<InputFileSource> datasetsToImport, std::unordered_set<std::string> areasFilter,
-//     std::unordered_set<std::string> measuresFilter, std::tuple<unsigned int, unsigned int> yearsFilter
-//   ) {
-
-//   }
+void BethYw::loadDatasets(
+        Areas& areas, std::string dir, std::vector <InputFileSource> datasetsToImport,
+        std::unordered_set <std::string> areasFilter,
+        std::unordered_set <std::string> measuresFilter, std::tuple<unsigned int, unsigned int> yearsFilter) {
+    for (InputFileSource dataset : datasetsToImport) {
+        InputFile currentDataset = InputFile(dir + DIR_SEP + dataset.FILE);
+        std::istream &is = currentDataset.open();
+        areas.populate(is, dataset.PARSER, dataset.COLS, &areasFilter, &measuresFilter, &yearsFilter);
+    }
+}
 
 bool BethYw::compareChar(unsigned char a, unsigned char b) {
     return std::tolower(a) == std::tolower(b);

@@ -73,7 +73,7 @@ public:
 
     void setArea(std::string localAuthorityCode, Area area);
 
-    Area& getArea(std::string localAuthorityCode);
+    Area &getArea(std::string localAuthorityCode);
 
     unsigned int size();
 
@@ -87,6 +87,13 @@ public:
             std::istream &is,
             const BethYw::SourceColumnMapping &cols,
             const StringFilterSet *const areas = nullptr,
+            const StringFilterSet *const measuresFilter = nullptr,
+            const YearFilterTuple *const yearsFilter = nullptr);
+
+    void populateFromAuthorityByYearCSV(
+            std::istream &is,
+            const BethYw::SourceColumnMapping &cols,
+            const StringFilterSet *const areasFilter = nullptr,
             const StringFilterSet *const measuresFilter = nullptr,
             const YearFilterTuple *const yearsFilter = nullptr);
 
@@ -106,7 +113,7 @@ public:
 
     std::string toJSON() const;
 
-    friend std::ostream& operator<<(std::ostream& os, const Areas& area);
+    friend std::ostream &operator<<(std::ostream &os, const Areas &area);
 };
 
 #endif // AREAS_H

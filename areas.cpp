@@ -346,7 +346,6 @@ void Areas::populateFromWelshStatsJSON(std::istream &is, const BethYw::SourceCol
     bool areasFilterExists = false, measuresFilterExists = false, yearsFilterExists = false;
     json j;
     is >> j;
-
     if (areas != nullptr) {
         if (!areas->empty()) {
             areasFilterExists = true;
@@ -364,7 +363,7 @@ void Areas::populateFromWelshStatsJSON(std::istream &is, const BethYw::SourceCol
         }
     }
     for (auto &el : j["value"].items()) {
-        bool filterCheck = false;
+        bool filterCheck = false, measureFilterCheck = false, yearFilterCheck = false;
         auto &data = el.value();
         std::string localAuthorityCode = data[cols.find(BethYw::AUTH_CODE)->second];
         std::string measureCode = std::string(data[cols.find(BethYw::MEASURE_CODE)->second]);
@@ -375,20 +374,25 @@ void Areas::populateFromWelshStatsJSON(std::istream &is, const BethYw::SourceCol
         if (areasFilterExists) {
             auto findIT = areas->find(localAuthorityCode);
             if (findIT != areas->end()) {
-                if (measuresFilterExists) {
-                    auto findMeasure = measuresFilter->find(measureCode);
-                    if (findMeasure != measuresFilter->end()) {
-                        if (yearsFilterExists) {
-                            if (yearsFilterExists && (std::get<0>(*yearsFilter) <= yearCode)
-                                && (std::get<1>(*yearsFilter) >= yearCode)) {
-                                filterCheck = true;
-                            }
-                        } else { filterCheck = true; }
-                    }
-                } else { filterCheck = true; }
+                filterCheck = true;
             }
         } else { filterCheck = true; }
-        if (filterCheck) {
+
+        if (measuresFilterExists) {
+            auto findMeasure = measuresFilter->find(measureCode);
+            if (findMeasure != measuresFilter->end()) {
+                measureFilterCheck = true;
+            }
+        } else { measureFilterCheck = true; }
+
+        if (yearsFilterExists) {
+            if (yearsFilterExists && (std::get<0>(*yearsFilter) <= yearCode)
+                && (std::get<1>(*yearsFilter) >= yearCode)) {
+                yearFilterCheck = true;
+            }
+        } else { yearFilterCheck = true; }
+
+        if (filterCheck && measureFilterCheck && yearFilterCheck) {
             Area tempArea = Area(localAuthorityCode);
 
             tempArea.setName("eng", std::string(data[cols.find(BethYw::AUTH_NAME_ENG)->second]));
@@ -472,7 +476,12 @@ void Areas::populateFromWelshStatsJSON(std::istream &is, const BethYw::SourceCol
     std::runtime_error if a parsing error occurs (e.g. due to a malformed file)
     std::out_of_range if there are not enough columns in cols
 */
+void Areas::populateFromAuthorityByYearCSV(std::istream &is, const BethYw::SourceColumnMapping &cols,
+                                           const StringFilterSet *const areasFilter,
+                                           const StringFilterSet *const measuresFilter,
+                                           const YearFilterTuple *const yearsFilter) {
 
+}
 
 /*
   TODO: Areas::populate(is, type, cols)
@@ -628,6 +637,10 @@ void Areas::populate(
 
     if (type == BethYw::AuthorityCodeCSV) {
         populateFromAuthorityCodeCSV(is, cols, areasFilter);
+    } else if (type == BethYw::WelshStatsJSON) {
+        populateFromWelshStatsJSON(is, cols, areasFilter, measuresFilter, yearsFilter);
+    } else if (type == BethYw::AuthorityByYearCSV) {
+        throw std::runtime_error("Not implemented yet!");
     } else {
         throw std::runtime_error("Areas::populate: Unexpected data type");
     }
