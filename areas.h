@@ -68,6 +68,13 @@ using AreasContainer = std::map<std::string, Area>;
 class Areas {
 private:
     AreasContainer areasContainer;
+
+    bool checkFilters(const std::string& areaCode,
+                      const std::string& measureCode,
+                      const unsigned int& year,
+                      const StringFilterSet *const areaFilter = nullptr,
+                      const StringFilterSet *const measuresFilter = nullptr,
+                      const YearFilterTuple *const yearsFilter = nullptr);
 public:
     Areas();
 

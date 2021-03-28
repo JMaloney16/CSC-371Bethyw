@@ -54,12 +54,8 @@
 */
 int BethYw::run(int argc, char *argv[]) {
     auto cxxopts = BethYw::cxxoptsSetup();
-//    cxxopts::ParseResult args;
-        auto args = cxxopts.parse(argc, argv);
-//    try {
-//    } catch (std::exception const exception) {
-//        throw (exception.what());
-//    }
+    auto args = cxxopts.parse(argc, argv);
+
 
     // Print the help usage if requested
     if (args.count("help")) {
@@ -70,11 +66,11 @@ int BethYw::run(int argc, char *argv[]) {
     std::string dir = args["dir"].as<std::string>() + DIR_SEP;
 
     // Parse other arguments and import data
-    std::vector<BethYw::InputFileSource> datasetsToImport;
+    std::vector <BethYw::InputFileSource> datasetsToImport;
     try {
         datasetsToImport = BethYw::parseDatasetsArg(args);
-    } catch (std::invalid_argument const &) {
-        std::cerr << "Invalid arguments!" << std::endl;
+    } catch (std::invalid_argument const &e) {
+        std::cerr << e.what() << std::endl;
         return -1;
     }
     auto areasFilter = BethYw::parseAreasArg(args);
@@ -85,17 +81,18 @@ int BethYw::run(int argc, char *argv[]) {
 
     BethYw::loadAreas(data, dir, areasFilter);
     BethYw::loadDatasets(data,
-                          dir,
-                          datasetsToImport,
-                          areasFilter,
-                          measuresFilter,
-                          yearsFilter);
+                         dir,
+                         datasetsToImport,
+                         areasFilter,
+                         measuresFilter,
+                         yearsFilter);
+
     if (args.count("json")) {
         // The output as JSON
-        std::cerr << data.toJSON() << std::endl;
+        std::cout << data.toJSON() << std::endl;
     } else {
         // The output as tables
-        std::cerr << data << std::endl;
+        std::cout << data << std::endl;
     }
 
     return 0;
@@ -271,11 +268,11 @@ std::unordered_set <std::string> BethYw::parseAreasArg(
         cxxopts::ParseResult &args) {
     // The unordered set you will return
     std::unordered_set <std::string> areas;
-    std::vector<std::string> temp;
+    std::vector <std::string> temp;
 
     // Retrieve the areas argument like so:
     try {
-        temp = args["areas"].as<std::vector<std::string>>();
+        temp = args["areas"].as < std::vector < std::string >> ();
     } catch (std::domain_error const &) {
         temp.push_back("all");
     }
@@ -319,9 +316,9 @@ std::unordered_set <std::string> BethYw::parseAreasArg(
 std::unordered_set <std::string> BethYw::parseMeasuresArg(
         cxxopts::ParseResult &args) {
     std::unordered_set <std::string> measures;
-    std::vector<std::string> temp;
-    try{
-        temp = args["measures"].as<std::vector<std::string>>();
+    std::vector <std::string> temp;
+    try {
+        temp = args["measures"].as < std::vector < std::string >> ();
     } catch (std::domain_error const &) {
         temp.push_back("all");
     }
@@ -459,10 +456,11 @@ std::tuple<unsigned int, unsigned int> BethYw::parseYearsArg(
 */
 void BethYw::loadAreas(
         Areas &areas, std::string dir, std::unordered_set <std::string> areasFilter) {
+
     InputFile areasFile = InputFile(dir + DIR_SEP + InputFiles::AREAS.FILE);
     std::istream &is = areasFile.open();
-
     areas.populate(is, InputFiles::AREAS.PARSER, InputFiles::AREAS.COLS, &areasFilter, nullptr, nullptr);
+
 
 }
 
@@ -522,13 +520,17 @@ void BethYw::loadAreas(
       BethYw::parseYearsArg(args));
 */
 void BethYw::loadDatasets(
-        Areas& areas, std::string dir, std::vector <InputFileSource> datasetsToImport,
+        Areas &areas, std::string dir, std::vector <InputFileSource> datasetsToImport,
         std::unordered_set <std::string> areasFilter,
         std::unordered_set <std::string> measuresFilter, std::tuple<unsigned int, unsigned int> yearsFilter) {
     for (InputFileSource dataset : datasetsToImport) {
+
         InputFile currentDataset = InputFile(dir + DIR_SEP + dataset.FILE);
         std::istream &is = currentDataset.open();
         areas.populate(is, dataset.PARSER, dataset.COLS, &areasFilter, &measuresFilter, &yearsFilter);
+        currentDataset.close();
+
+
     }
 }
 

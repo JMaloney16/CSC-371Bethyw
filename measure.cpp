@@ -120,7 +120,7 @@ void Measure::setLabel(std::string label) {
  * Get all of the values associated with the measure
  * @return Map of values attached to the measure
  */
-const std::map<unsigned int, double>& Measure::getValues() {
+std::map<unsigned int, double> Measure::getValues() {
     return values;
 }
 

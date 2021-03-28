@@ -40,7 +40,7 @@ public:
 
     void setLabel(std::string label);
 
-    const std::map<unsigned int, double>& getValues();
+    std::map<unsigned int, double> getValues();
 
     double getValue(unsigned int key);
 

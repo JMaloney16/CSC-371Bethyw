@@ -88,3 +88,10 @@ std::istream& InputFile::open() {
     return this->inputStream;
 //
 }
+
+/**
+ * Closes the input stream attached to this object
+ */
+void InputFile::close() {
+    this->inputStream.close();
+}

@@ -216,12 +216,10 @@ Measure& Area::getMeasure(std::string key) {
     area.setMeasure(codename, measure);
 */
 void Area::setMeasure(std::string codename, Measure measure) {
-//    measures[codename] = measure;
     std::transform(codename.begin(), codename.end(), codename.begin(),
                    [](unsigned char c){return std::tolower(c); });
     auto searchMeasures = measures.find(codename);
     if (searchMeasures != measures.end()){
-//        measures.erase(codename);
         //Add to existing measure
         for (auto& iterate : measure.getValues()) {
             searchMeasures->second.setValue(iterate.first, iterate.second);
@@ -292,12 +290,6 @@ unsigned int Area::size() {
 */
 std::ostream& operator<<(std::ostream& os, const Area& area) {
 
-//    for (auto name : area.names) {
-//        os << name.second << " ";
-//        if (name != area.names.end()) {
-//            os << "/";
-//        }
-//    }
     os << area.names.find("eng")->second << " / " << area.names.find("cym")->second;
 
     os << " (" << area.localAuthorityCode << ")" << std::endl;

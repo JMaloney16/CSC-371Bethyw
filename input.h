@@ -59,6 +59,7 @@ private:
 public:
   InputFile(const std::string& filePath);
   std::istream& open();
+  void close();
 };
 
 #endif // INPUT_H_
