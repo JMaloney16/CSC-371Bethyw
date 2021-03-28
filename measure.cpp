@@ -227,10 +227,12 @@ unsigned int Measure::size() {
     auto diff = measure.getDifference(); // returns 1.0
 */
 double Measure::getDifference() const {
-    if (values.end()->second - values.begin()->second == 0) {
+    auto firstValue = values.begin()->second;
+    auto lastValue = values.rbegin()->second;
+    if (lastValue - firstValue == 0) {
         return 0;
     }else {
-        return values.end()->second - values.begin()->second;
+        return lastValue - firstValue;
     }
 }
 
@@ -253,8 +255,8 @@ double Measure::getDifference() const {
 */
 double Measure::getDifferenceAsPercentage() const {
     double beginValue = values.begin()->second;
-    double endValue = values.end()->second;
-    return endValue / beginValue;
+    double endValue = values.rbegin()->second;
+    return ((endValue / beginValue) - 1)*100;
 }
 
 /*
@@ -329,7 +331,6 @@ std::ostream& operator<<(std::ostream& os, const Measure& measure) {
     }
     os << std::setw(PADDING_SIZE) << measure.getAverage() << std::setw(PADDING_SIZE)
     << measure.getDifference() << std::setw(PADDING_SIZE) << measure.getDifferenceAsPercentage();
-
     return os;
 }
 
