@@ -146,7 +146,7 @@ const std::unordered_map<std::string, std::string>& Area::getNames() {
  * Get all of the measures associated with the area
  * @return A map of all measures stored in the area
  */
-const std::unordered_map<std::string,Measure>& Area::getMeasures() {
+const std::map<std::string,Measure>& Area::getMeasures() {
     return measures;
 }
 

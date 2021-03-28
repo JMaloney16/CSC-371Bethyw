@@ -327,7 +327,7 @@ std::ostream& operator<<(std::ostream& os, const Measure& measure) {
     os << std::setw(PADDING_SIZE) << "Average" << std::setw(PADDING_SIZE) << 
     "Diff." << std::setw(PADDING_SIZE) << "% Diff" << std::endl;
     for (auto value : measure.values) {
-        os << std::setw(PADDING_SIZE) << value.second;
+        os << std::setw(PADDING_SIZE) << std::fixed << std::setprecision(6) << value.second;
     }
     os << std::setw(PADDING_SIZE) << measure.getAverage() << std::setw(PADDING_SIZE)
     << measure.getDifference() << std::setw(PADDING_SIZE) << measure.getDifferenceAsPercentage();

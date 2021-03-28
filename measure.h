@@ -18,7 +18,7 @@
 #include <map>
 
 
-const int PADDING_SIZE = 15;
+const int PADDING_SIZE = 12;
 /*
   The Measure class contains a measure code, label, and a container for readings
   from across a number of years.

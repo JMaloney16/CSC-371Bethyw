@@ -843,8 +843,8 @@ std::string Areas::toJSON() const {
     std::cout << areas << std::end;
 */
 std::ostream &operator<<(std::ostream &os, const Areas &areas) {
-    for (auto area : areas.areasContainer) {
-        os << area.second << std::endl;
+    for (auto area = areas.areasContainer.begin(); area != areas.areasContainer.end(); ++area) {
+        os << area->second << std::endl;
     }
     return os;
 }

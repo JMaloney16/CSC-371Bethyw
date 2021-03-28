@@ -49,7 +49,7 @@ using YearFilterTuple = std::tuple<unsigned int, unsigned int>;
 /*
   An alias for the data within an Areas object stores Area objects.
 */
-using AreasContainer = std::unordered_map<std::string, Area>;
+using AreasContainer = std::map<std::string, Area>;
 
 /*
   Areas is a class that stores all the data categorised by area. The 
